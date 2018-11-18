@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
-import { getMovies } from '../services/fakeMovieService'
+import { getMovies } from '../services/fakeMovieService';
+import { getGenres } from '../services/fakeGenreService';
 import Pagination from './common/pagination';
-import Like from './common/like';
 import ListGroup from './common/listGroup';
 import {paginate} from '../utils/paginate';
+import MoviesTable from './moviesTable';
+import _ from 'lodash';
 
 class Movies extends Component {
     state = {  
-        movies : getMovies(),
+        movies : [],
+        genres : [],
         pageSize: 4,
-        currentPage :1
+        currentPage :1,
+        sortColumn: {path: 'title', order: 'asc'}
     };
+
+    componentDidMount(){
+        const genres = [{_id: "", name : 'All Genres'},...getGenres()]
+        this.setState({movies: getMovies(), genres});
+    }
 
     handleDelele = movie => {
         const movies = this.state.movies.filter(m => m._id !== movie._id);
@@ -19,6 +28,14 @@ class Movies extends Component {
 
     handlePageChange = (page) =>{
         this.setState({currentPage: page});
+    }
+
+    handleGenreSelect = (genre) => {
+        this.setState({selectedGenre: genre, currentPage: 1});
+    }
+
+    handleSort = (sortColumn) => {
+        this.setState({sortColumn});
     }
 
     handleLike = (movie) => {
@@ -31,46 +48,41 @@ class Movies extends Component {
     }
 
     render() { 
-        const {length: count} = this.state.movies;
-        const {pageSize, currentPage, movies:allMovies} = this.state;
+        const {pageSize, currentPage, movies:allMovies, selectedGenre, sortColumn} = this.state;
 
         if(this.state.movies.length === 0) return <p> there is no movie in database.</p>;
-        const movies = paginate(allMovies, currentPage, pageSize);
+
+        const filtered = selectedGenre && selectedGenre._id ? (allMovies.filter(m => m.genre._id === selectedGenre._id)) : allMovies;
+        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order] );
+        const movies = paginate(sorted, currentPage, pageSize);
+
         return (
-            <React.Fragment>
-                <p>showing {count} movie in the database</p>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Genre</th>
-                        <th>Stock</th>
-                        <th>Rate</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {movies.map( movie => (
-                    <tr key ={movie._id}>
-                        <td>{movie.title}</td>
-                        <td>{movie.genre.name}</td>
-                        <td>{movie.numberInStock}</td>
-                        <td>{movie.dailyRentalRate}</td>
-                        <td><Like liked={movie.liked} onClick={ () => this.handleLike(movie)} /></td>
-                        <td><button onClick={() => this.handleDelele(movie)} className="btn btn-danger btn-sm">Delete</button></td>
-                    </tr>
-                    )
-                    )}
-                </tbody>
-            </table>
+            <div className="row">
+            <div className="col-2">
+                <ListGroup 
+                    items={this.state.genres} 
+                    selectedItem={this.state.selectedGenre}
+                    onItemSelect={this.handleGenreSelect}
+                />
+            </div>
+            <div className="col">
+            <p>showing {filtered.length} movie in the database</p>
+            
+            <MoviesTable
+                movies={movies}
+                sortColumn={sortColumn}
+                onLike={this.handleLike}
+                onDelete={this.handleDelele}
+                onSort={this.handleSort}
+            />
             <Pagination 
-               itemsCount={count}
+               itemsCount={filtered.length}
                pageSize={pageSize} 
                onPageChange={this.handlePageChange}
                currentPage={currentPage}
              />
-            </React.Fragment>
+            </div>  
+            </div>
         );
     }
 }

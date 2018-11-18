@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ListGroup from './listGroup';
 class Like extends Component {
 
     render() { 
@@ -14,6 +15,11 @@ class Like extends Component {
               </i> 
             );
     }
+}
+
+ListGroup.defaultProps = {
+    textProperty : 'name',
+    valueProperty : '_id'
 }
  
 export default Like;

@@ -16,10 +16,5 @@ class Like extends Component {
             );
     }
 }
-
-ListGroup.defaultProps = {
-    textProperty : 'name',
-    valueProperty : '_id'
-}
  
 export default Like;

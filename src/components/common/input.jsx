@@ -1,13 +1,11 @@
 
 import React from 'react';
-const Input = ({name, label, value, onChange, error}) => {
+const Input = ({name, label, error, ...rest}) => {
     return (  
         <div className="form-group">
             <label htmlFor={name}>{label}</label>
-            <input type="text" 
+            <input {...rest}
                 name={name}
-                value={value}
-                onChange={onChange}
                 className="form-control" 
                 id={name} 
                 aria-describedby="emailHelp"

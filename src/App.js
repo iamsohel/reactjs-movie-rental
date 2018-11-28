@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {ToastContainer} from "react-toastify";
-import jwtDecode from 'jwt-decode';
 import {Route, Redirect, Switch} from 'react-router-dom';
 import Customers from './components/customers';
 import Rentals from './components/rentals';
@@ -9,35 +8,40 @@ import NotFound from './components/notFound';
 import Movies from './components/movies';
 import NavBar from './components/navBar';
 import LoginForm from './components/loginForm';
+import Logout from './components/logout';
+import ProtectedRoute from "./components/common/protectedRoute";
 import RegisterForm from './components/registerForm';
+import auth from './services/authService'
 import './App.css';
 import "react-toastify/dist/ReactToastify.css";
+
 
 
 class App extends Component {
     state = {};
 
     componentDidMount(){
-        try{
-            const jwt = localStorage.getItem('token');
-            const user = jwtDecode(jwt);
-            this.setState({user});
-        } catch (ex) {
-            
-        }
-        
+        const user = auth.getCurrentUser();
+        this.setState({user})
     }
     render() {
+        const {user} = this.state;
         return (
             <React.Fragment>
                 <ToastContainer/>
-                <NavBar user={this.state.user}/>
+                <NavBar user={user}/>
                 <main className="container">
                     <Switch>
                         <Route path="/register" component={RegisterForm}/>
                         <Route path="/login" component={LoginForm}/>
-                        <Route path="/movies/:id" component={MovieForm}/>
-                        <Route path="/movies" component={Movies}/>
+                        <Route path="/logout" component={Logout}/>
+                        <ProtectedRoute
+                            path="/movies/:id" component={MovieForm}
+                        />
+                        <Route
+                            path="/movies"
+                            render={props => <Movies {...props} user={this.state.user}/>}
+                        />
                         <Route path="/customers" component={Customers}/>
                         <Route path="/rentals" component={Rentals}/>
                         <Route path="/not-found" component={NotFound}/>

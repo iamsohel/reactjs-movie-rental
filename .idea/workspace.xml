@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4f7164bb-8fc0-4a42-b15f-f8bfcc955ec5" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/common/protectedRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/common/protectedRoute.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/loginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/loginForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/moviesTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/moviesTable.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="4f7164bb-8fc0-4a42-b15f-f8bfcc955ec5" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -239,6 +234,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../material-ui/reactjs-movie-rental" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="E:\React Source Code\reactjs-movie-rental\node_modules\eslint" />
@@ -269,16 +265,15 @@
       <updated>1543295328184</updated>
       <workItem from="1543295335741" duration="12185000" />
       <workItem from="1543381754120" duration="10601000" />
-      <workItem from="1543468449066" duration="3100000" />
+      <workItem from="1543468449066" duration="3115000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25886000" />
+    <option name="totallyTimeSpent" value="25901000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.500625" side_tool="true" weight="0.3294271" />

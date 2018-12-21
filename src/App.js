@@ -4,6 +4,8 @@ import {Route, Redirect, Switch} from 'react-router-dom';
 import Customers from './components/customers';
 import Rentals from './components/rentals';
 import MovieForm from './components/movieForm';
+import Profile from './components/profile';
+import CustomerForm from './components/customerForm';
 import NotFound from './components/notFound';
 import Movies from './components/movies';
 import NavBar from './components/navBar';
@@ -22,6 +24,7 @@ class App extends Component {
 
     componentDidMount(){
         const user = auth.getCurrentUser();
+        console.log(user);
         this.setState({user})
     }
     render() {
@@ -29,7 +32,7 @@ class App extends Component {
         return (
             <React.Fragment>
                 <ToastContainer/>
-                <NavBar user={user}/>
+                 <NavBar user={user}/>
                 <main className="container">
                     <Switch>
                         <Route path="/register" component={RegisterForm}/>
@@ -38,11 +41,21 @@ class App extends Component {
                         <ProtectedRoute
                             path="/movies/:id" component={MovieForm}
                         />
+                        <ProtectedRoute
+                            path="/customers/:id" component={CustomerForm}
+                        />
                         <Route
                             path="/movies"
                             render={props => <Movies {...props} user={this.state.user}/>}
                         />
-                        <Route path="/customers" component={Customers}/>
+                       <Route
+                            path="/customers"
+                            render={props => <Customers {...props} user={this.state.user}/>}
+                        />
+                        <Route
+                            path="/profile"
+                            render={props => <Profile {...props} user={this.state.user}/>}
+                        />
                         <Route path="/rentals" component={Rentals}/>
                         <Route path="/not-found" component={NotFound}/>
                         <Redirect from="/" exact to="/movies"/>

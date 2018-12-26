@@ -1,115 +1,115 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import CustomersTable from "./customerTable";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import Pagination from "./common/pagination";
-import {getCustomers, deleteCustomer} from "../services/customerService";
-import {paginate} from "../utils/paginate";
+import { getCustomers, deleteCustomer } from "../services/customerService";
+import { paginate } from "../utils/paginate";
 import _ from "lodash";
 import SearchBox from "./searchBox";
 
 class Customers extends Component {
-    state = {
-        customers: [],
-        currentPage: 1,
-        pageSize: 4,
-        searchQuery: "",
-        sortColumn: {path: "name", order: "asc"}
-    };
+  state = {
+    customers: [],
+    currentPage: 1,
+    pageSize: 4,
+    searchQuery: "",
+    sortColumn: { path: "name", order: "asc" }
+  };
 
-    async componentDidMount() {
-        const {data: customers} = await getCustomers();
-        console.log(customers);
-        this.setState({customers});
+  async componentDidMount() {
+    const { data: customers } = await getCustomers();
+    console.log(customers);
+    this.setState({ customers });
+  }
+
+  handleDelete = async customer => {
+    const originalCustomers = this.state.customers;
+    const customers = originalCustomers.filter(m => m._id !== customer._id);
+    this.setState({ customers });
+
+    try {
+      await deleteCustomer(customer._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("This customer has been already deleted.");
+      this.setState({ customers: originalCustomers });
     }
+  };
 
-    handleDelete = async customer => {
-        const originalCustomers = this.state.customers;
-        const customers = originalCustomers.filter(m => m._id !== customer._id);
-        this.setState({customers});
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
 
-        try {
-            await deleteCustomer(customer._id);
-        } catch (ex) {
-            if (ex.response && ex.response.status === 404)
-                toast.error('This customer has been already deleted.')
-            this.setState({customers: originalCustomers});
-        }
+  handleSearch = query => {
+    this.setState({ searchQuery: query });
+  };
 
+  handleSort = sortColumn => {
+    this.setState({ sortColumn });
+  };
 
-    };
+  getPagedData = () => {
+    const {
+      pageSize,
+      currentPage,
+      sortColumn,
+      searchQuery,
+      customers: allCustomers
+    } = this.state;
 
-    handlePageChange = page => {
-        this.setState({currentPage: page});
-    };
+    let filtered = allCustomers;
+    if (searchQuery)
+      filtered = allCustomers.filter(m =>
+        m.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
 
-    handleSearch = query => {
-        this.setState({searchQuery: query});
-    };
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
-    handleSort = sortColumn => {
-        this.setState({sortColumn});
-    };
+    const customers = paginate(sorted, currentPage, pageSize);
 
-    getPagedData = () => {
-        const {
-            pageSize,
-            currentPage,
-            sortColumn,
-            searchQuery,
-            customers: allCustomers
-        } = this.state;
+    return { totalCount: filtered.length, data: customers };
+  };
 
-        let filtered = allCustomers;
-        if (searchQuery)
-            filtered = allCustomers.filter(m =>
-                m.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-            );
-    
-        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+  render() {
+    const { length: count } = this.state.customers;
+    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
+    const { user } = this.props;
 
-        const customers = paginate(sorted, currentPage, pageSize);
+    //if (count === 0) return <p>There are no movies in the database.</p>;
 
-        return {totalCount: filtered.length, data: customers};
-    };
+    const { totalCount, data: customers } = this.getPagedData();
 
-    render() {
-        const {length: count} = this.state.customers;
-        const {pageSize, currentPage, sortColumn, searchQuery} = this.state;
-        const {user} = this.props;
-
-        //if (count === 0) return <p>There are no movies in the database.</p>;
-
-        const {totalCount, data: customers} = this.getPagedData();
-
-        return (
-            <div className="row">
-                <div className="col">
-                    {user &&(<Link
-                        to="/customers/new"
-                        className="btn btn-primary"
-                        style={{marginBottom: 20}}
-                    >
-                        New Customer
-                    </Link>)}
-                    <p>Showing {totalCount} customers in the database.</p>
-                    <SearchBox value={searchQuery} onChange={this.handleSearch}/>
-                    <CustomersTable
-                        customers={customers}
-                        sortColumn={sortColumn}
-                        onDelete={this.handleDelete}
-                        onSort={this.handleSort}
-                    />
-                    <Pagination
-                        itemsCount={totalCount}
-                        pageSize={pageSize}
-                        currentPage={currentPage}
-                        onPageChange={this.handlePageChange}
-                    />
-                </div>
-            </div>
-        );
-    }
+    return (
+      <div className="row">
+        <div className="col">
+          {user && (
+            <Link
+              to="/customers/new"
+              className="btn btn-primary"
+              style={{ marginBottom: 20 }}
+            >
+              New Customer
+            </Link>
+          )}
+          <p>Showing {totalCount} customers in the database.</p>
+          <SearchBox value={searchQuery} onChange={this.handleSearch} />
+          <CustomersTable
+            customers={customers}
+            sortColumn={sortColumn}
+            onDelete={this.handleDelete}
+            onSort={this.handleSort}
+          />
+          <Pagination
+            itemsCount={totalCount}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={this.handlePageChange}
+          />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Customers;
